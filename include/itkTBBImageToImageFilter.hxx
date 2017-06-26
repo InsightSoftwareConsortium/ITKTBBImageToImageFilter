@@ -497,7 +497,7 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
     OutputImageRegionType myRegion(index, size);
 
     // Run the ThreadedGenerateData method!
-    this->ThreadedGenerateData(myRegion, jobId);
+    this->TBBGenerateData(myRegion);
 }
 
 
