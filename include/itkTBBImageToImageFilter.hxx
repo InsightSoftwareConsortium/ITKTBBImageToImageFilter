@@ -1,5 +1,5 @@
-#ifndef __itkTBBImageToImageFilter_hxx
-#define __itkTBBImageToImageFilter_hxx
+#ifndef itkTBBImageToImageFilter_hxx
+#define itkTBBImageToImageFilter_hxx
 
 #include "itkTBBImageToImageFilter.h"
 
@@ -21,15 +21,15 @@ namespace itk {
 
 #ifdef ITK_USE_TBB
 /**
- * \class    TBBFunctor
- *
- * \brief    TBB functor to execute jobs in parallel.
- *
- * \author    Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
- *
- * \tparam    TInputImage     Type of the input image.
- * \tparam    TOutputImage    Type of the output image.
- **/
+* \class    TBBFunctor
+*
+* \brief    TBB functor to execute jobs in parallel.
+*
+* \author    Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
+*
+* \tparam    TInputImage     Type of the input image.
+* \tparam    TOutputImage    Type of the output image.
+**/
 template< typename TInputImage, typename TOutputImage >
 class TBBFunctor
 {
@@ -108,15 +108,15 @@ TBBImageToImageFilter< TInputImage, TOutputImage >::~TBBImageToImageFilter()
 }
 
 /**
- * \fn    template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage > ::GenerateData()
- *
- * \brief    New default implementation for GenerateData() to use TBB
- *
- * \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
- *
- * \tparam    typename TInputImage     Type of the typename t input image.
- * \tparam    typename TOutputImage    Type of the typename t output image.
- **/
+* \fn    template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage > ::GenerateData()
+*
+* \brief    New default implementation for GenerateData() to use TBB
+*
+* \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
+*
+* \tparam    typename TInputImage     Type of the typename t input image.
+* \tparam    typename TOutputImage    Type of the typename t output image.
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateData()
 {
@@ -197,88 +197,83 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfThreads(Thre
 #endif // ITK_USE_TBB
 }
 
-
 /**
- * \fn    template< typename TInputImage, typename TOutputImage > unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfJobs() const
- *
- * \brief    Gets the number of jobs.
- *
- *             \warning This function only returns a valid value when called from AllocateOutputs,
- *             BeforeThreadedGenerateData(), TBBGenerateData() and AfterThreadedGenerateData(),
- *             ie when the input image is known
- *
- * \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
- *
- * \tparam    TInputImage     Type of the input image.
- * \tparam    TOutputImage    Type of the output image.
- *
- * \return    The number of jobs
- **/
+* \fn    template< typename TInputImage, typename TOutputImage > unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfJobs() const
+*
+* \brief    Gets the number of jobs.
+*
+*             \warning This function only returns a valid value when called from AllocateOutputs,
+*             BeforeThreadedGenerateData(), TBBGenerateData() and AfterThreadedGenerateData(),
+*             ie when the input image is known
+*
+* \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
+*
+* \tparam    TInputImage     Type of the input image.
+* \tparam    TOutputImage    Type of the output image.
+*
+* \return    The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfJobs() const
 {
     return m_TBBNumberOfJobs;
 }
 
-
 /**
- * \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfJobs(unsigned int nbJobs)
- *
- * \brief   Sets the number of jobs (Internal).
- *
- * \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
- *
- * \tparam  TInputImage     Type of the input image.
- * \tparam  TOutputImage    Type of the output image.
- *
- * \return  The number of jobs
- **/
+* \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfJobs(unsigned int nbJobs)
+*
+* \brief   Sets the number of jobs (Internal).
+*
+* \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
+*
+* \tparam  TInputImage     Type of the input image.
+* \tparam  TOutputImage    Type of the output image.
+*
+* \return  The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfJobs(unsigned int nbJobs)
 {
     this->m_TBBNumberOfJobs = nbJobs;
 }
 
-
-
 /**
- * \fn  template< typename TInputImage, typename TOutputImage > unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNbReduceDimensions() const
- *
- * \brief   Gets the number of dimension to separate for the Jobs multithreading
- *
- * \author  Etienne St-Onge
- *
- * \tparam  TInputImage     Type of the input image.
- * \tparam  TOutputImage    Type of the output image.
- *
- * \return  The number of jobs
- **/
+* \fn  template< typename TInputImage, typename TOutputImage > unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNbReduceDimensions() const
+*
+* \brief   Gets the number of dimension to separate for the Jobs multithreading
+*
+* \author  Etienne St-Onge
+*
+* \tparam  TInputImage     Type of the input image.
+* \tparam  TOutputImage    Type of the output image.
+*
+* \return  The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNbReduceDimensions() const
 {
     return m_TBBNbReduceDimensions;
 }
 
-
 /**
- * \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(int nbReduceDim)
- *
- * \brief   Set the number of dimension to separate and multithread each section.
- *          (nbReduceDim < 0  : negative number for automatic splitting)
- *
- *          \example : for a 3D image (volume) with the shape 30x10x5
- *          nbReduceDim == 0  : Will generate a single (1) Job with the whole image (size 30x10x5)
- *          nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
- *          nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
- *          nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1)
- *
- * \author  Etienne St-Onge
- *
- * \tparam  TInputImage     Type of the input image.
- * \tparam  TOutputImage    Type of the output image.
- *
- * \return  The number of jobs
- **/
+* \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(int nbReduceDim)
+*
+* \brief   Set the number of dimension to separate and multithread each section.
+*          (nbReduceDim < 0  : negative number for automatic splitting)
+*
+*          \example : for a 3D image (volume) with the shape 30x10x5
+*          nbReduceDim == 0  : Will generate a single (1) Job with the whole image (size 30x10x5)
+*          nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
+*          nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
+*          nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1)
+*
+* \author  Etienne St-Onge
+*
+* \tparam  TInputImage     Type of the input image.
+* \tparam  TOutputImage    Type of the output image.
+*
+* \return  The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(int nbReduceDim)
 {
@@ -292,22 +287,21 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(i
     }
 }
 
-
 /**
- * \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
- *
- * \brief   Generate the number Jobs based on the NbReduceDimensions
- *              or based on the NumberOfThreads and the Image Dimension (if NbReduceDimensions was not set).
- *
- *          \warning  This function must be called after the NumberOfThreads is set.
- *
- * \author  Etienne St-Onge
- *
- * \tparam  TInputImage     Type of the input image.
- * \tparam  TOutputImage    Type of the output image.
- *
- * \return  The number of jobs
- **/
+* \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
+*
+* \brief   Generate the number Jobs based on the NbReduceDimensions
+*              or based on the NumberOfThreads and the Image Dimension (if NbReduceDimensions was not set).
+*
+*          \warning  This function must be called after the NumberOfThreads is set.
+*
+* \author  Etienne St-Onge
+*
+* \tparam  TInputImage     Type of the input image.
+* \tparam  TOutputImage    Type of the output image.
+*
+* \return  The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
 {
@@ -349,19 +343,20 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
 }
 
 /**
- * \fn  template< typename TInputImage, typename TOutputImage > void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
- *
- * \brief   Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
- *
- *          \warning TBBImageToImageFilter doesn't support threadId
- *
- * \author  Etienne St-Onge
- *
- * \tparam  TInputImage     Type of the input image.
- * \tparam  TOutputImage    Type of the output image.
- *
- * \return  The number of jobs
- **/
+* \fn  template< typename TInputImage, typename TOutputImage >
+* void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
+*
+* \brief   Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
+*
+*          \warning TBBImageToImageFilter doesn't support threadId
+*
+* \author  Etienne St-Onge
+*
+* \tparam  TInputImage     Type of the input image.
+* \tparam  TOutputImage    Type of the output image.
+*
+* \return  The number of jobs
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
 {
@@ -375,19 +370,19 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(co
 #ifndef ITK_USE_TBB
 
 /**
- * \fn	template< typename TInputImage, typename TOutputImage > ITK_THREAD_RETURN_TYPE MyITKImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
- *
- * \brief	Internal function. Callback method for the multithreader.
- *
- * \author	Benoit Scherrer
- * \date	October 2016
- *
- * \exception	Thrown an exception if an error occurs.
- *
- * \tparam	TInputImage 	Type of the input image.
- * \tparam	TOutputImage	Type of the output image.
- * \param [in,out]	Poiner to the itk::MultiThreader::ThreadInfoStruct
- **/
+* \fn	template< typename TInputImage, typename TOutputImage > ITK_THREAD_RETURN_TYPE MyITKImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
+*
+* \brief	Internal function. Callback method for the multithreader.
+*
+* \author	Benoit Scherrer
+* \date	October 2016
+*
+* \exception	Thrown an exception if an error occurs.
+*
+* \tparam	TInputImage 	Type of the input image.
+* \tparam	TOutputImage	Type of the output image.
+* \param [in,out]	Poiner to the itk::MultiThreader::ThreadInfoStruct
+**/
 
 template< typename TInputImage, typename TOutputImage >
 ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
@@ -424,18 +419,18 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
 }
 
 /**
- * \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
- *
- * \brief	Gets the next job.
- *
- * \author	Benoit Scherrer
- * \date	October 2016
- *
- * \tparam	TInputImage 	Type of the input image.
- * \tparam	TOutputImage	Type of the output image.
- *
- * \return	The next job&lt;typename t input image,typename t output image &gt;
- **/
+* \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
+*
+* \brief	Gets the next job.
+*
+* \author	Benoit Scherrer
+* \date	October 2016
+*
+* \tparam	TInputImage 	Type of the input image.
+* \tparam	TOutputImage	Type of the output image.
+*
+* \return	The next job&lt;typename t input image,typename t output image &gt;
+**/
 template< typename TInputImage, typename TOutputImage >
 int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 {
@@ -454,19 +449,19 @@ int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 }
 
 /**
- * \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
- *
- * \brief	Executes the job identified by jobId.
- *
- * \author	Benoit Scherrer
- * \date	October 2016
- *
- * \tparam	TInputImage 	Type of the input image.
- * \tparam	TOutputImage	Type of the output image.
- * \param	jobId	Identifier for the job.
- *
- * \return	.
- **/
+* \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
+*
+* \brief	Executes the job identified by jobId.
+*
+* \author	Benoit Scherrer
+* \date	October 2016
+*
+* \tparam	TInputImage 	Type of the input image.
+* \tparam	TOutputImage	Type of the output image.
+* \param	jobId	Identifier for the job.
+*
+* \return	.
+**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 {
@@ -506,4 +501,4 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 
 }  //namespace itk
 
-#endif
+#endif // itkTBBImageToImageFilter_hxx

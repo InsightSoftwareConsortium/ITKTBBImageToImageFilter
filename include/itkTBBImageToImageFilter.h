@@ -1,5 +1,5 @@
-#ifndef __itkTBBImageToImageFilter_h
-#define __itkTBBImageToImageFilter_h
+#ifndef itkTBBImageToImageFilter_h
+#define itkTBBImageToImageFilter_h
 
 #include <itkImageToImageFilter.h>
 
@@ -116,7 +116,7 @@ protected:
 #ifndef ITK_USE_TBB
     int				GetNextJob();
     void			ExecuteJob( int jobId );
-    void			ResetJobQueue() ;
+    void			ResetJobQueue();
     static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 
@@ -139,4 +139,4 @@ private:
 #include "itkTBBImageToImageFilter.hxx"
 #endif // ITK_MANUAL_INSTANTIATION
 
-#endif // __itkTBBImageToImageFilter_h
+#endif // itkTBBImageToImageFilter_h
