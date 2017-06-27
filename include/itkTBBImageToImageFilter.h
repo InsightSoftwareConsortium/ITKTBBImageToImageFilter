@@ -3,16 +3,6 @@
 
 #include <itkImageToImageFilter.h>
 
-
-/************************************************************************************************
-* \class	TBBImageToImageFilter
-*
-* \brief	TBBImageToImageFilter.
-*
-* \author   Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
-* \date     September 2016
-*************************************************************************************************/
-
 namespace itk {
 
 #ifdef ITK_USE_TBB
@@ -21,15 +11,15 @@ class  TBBFunctor;
 #endif // ITK_USE_TBB
 
 /**
- * \class	TBBImageToImageFilter
+ * \class   TBBImageToImageFilter
  *
  * \brief   ImageToImageFilter using Intel Threading Building Blocks (TBB) parallelization
  *          Multithreading with Thread and Job pool
  *
  * \author  Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
  *
- * \tparam	TInputImage 	Type of the input image.
- * \tparam	TOutputImage	Type of the output image.
+ * \tparam  TInputImage     Type of the input image.
+ * \tparam  TOutputImage    Type of the output image.
  **/
 template< typename TInputImage, typename TOutputImage >
 class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputImage>
@@ -41,10 +31,10 @@ class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputIma
 
 public:
     // Standard class typedefs.
-    typedef TBBImageToImageFilter							Self;
+    typedef TBBImageToImageFilter                           Self;
     typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
-    typedef SmartPointer< Self >							Pointer;
-    typedef SmartPointer< const Self >						ConstPointer;
+    typedef SmartPointer< Self >                            Pointer;
+    typedef SmartPointer< const Self >                      ConstPointer;
 
     // Run-time type information (and related methods).
     itkTypeMacro(TBBImageToImageFilter, ImageToImageFilter);
@@ -91,6 +81,7 @@ public:
      * \return  The number of jobs
      **/
 
+    // TODO Should be protected no? -- rdebroiz
     virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) = 0;
     // use TBBGenerateData instead of ThreadedGenerateData
     virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
@@ -114,9 +105,9 @@ protected:
     void            GenerateNumberOfJobs();
 
 #ifndef ITK_USE_TBB
-    int				GetNextJob();
-    void			ExecuteJob( int jobId );
-    void			ResetJobQueue();
+    int             GetNextJob();
+    void            ExecuteJob( int jobId );
+    void            ResetJobQueue();
     static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 

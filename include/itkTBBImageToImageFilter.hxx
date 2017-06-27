@@ -370,18 +370,18 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(co
 #ifndef ITK_USE_TBB
 
 /**
-* \fn	template< typename TInputImage, typename TOutputImage > ITK_THREAD_RETURN_TYPE MyITKImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
+* \fn   template< typename TInputImage, typename TOutputImage > ITK_THREAD_RETURN_TYPE MyITKImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
 *
-* \brief	Internal function. Callback method for the multithreader.
+* \brief    Internal function. Callback method for the multithreader.
 *
-* \author	Benoit Scherrer
-* \date	October 2016
+* \author   Benoit Scherrer
+* \date October 2016
 *
-* \exception	Thrown an exception if an error occurs.
+* \exception    Thrown an exception if an error occurs.
 *
-* \tparam	TInputImage 	Type of the input image.
-* \tparam	TOutputImage	Type of the output image.
-* \param [in,out]	Poiner to the itk::MultiThreader::ThreadInfoStruct
+* \tparam   TInputImage     Type of the input image.
+* \tparam   TOutputImage    Type of the output image.
+* \param [in,out]   Poiner to the itk::MultiThreader::ThreadInfoStruct
 **/
 
 template< typename TInputImage, typename TOutputImage >
@@ -419,17 +419,17 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
 }
 
 /**
-* \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
+* \fn   template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 *
-* \brief	Gets the next job.
+* \brief    Gets the next job.
 *
-* \author	Benoit Scherrer
-* \date	October 2016
+* \author   Benoit Scherrer
+* \date October 2016
 *
-* \tparam	TInputImage 	Type of the input image.
-* \tparam	TOutputImage	Type of the output image.
+* \tparam   TInputImage     Type of the input image.
+* \tparam   TOutputImage    Type of the output image.
 *
-* \return	The next job&lt;typename t input image,typename t output image &gt;
+* \return   The next job&lt;typename t input image,typename t output image &gt;
 **/
 template< typename TInputImage, typename TOutputImage >
 int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
@@ -449,18 +449,18 @@ int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 }
 
 /**
-* \fn	template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
+* \fn   template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 *
-* \brief	Executes the job identified by jobId.
+* \brief    Executes the job identified by jobId.
 *
-* \author	Benoit Scherrer
-* \date	October 2016
+* \author   Benoit Scherrer
+* \date October 2016
 *
-* \tparam	TInputImage 	Type of the input image.
-* \tparam	TOutputImage	Type of the output image.
-* \param	jobId	Identifier for the job.
+* \tparam   TInputImage     Type of the input image.
+* \tparam   TOutputImage    Type of the output image.
+* \param    jobId   Identifier for the job.
 *
-* \return	.
+* \return   .
 **/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )

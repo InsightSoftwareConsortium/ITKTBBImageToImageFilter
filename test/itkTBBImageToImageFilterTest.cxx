@@ -4,6 +4,7 @@
 
 #include <itkStaticAssert.h>
 #include <itkImageRegionConstIterator.h>
+#include <itkTestingMacros.h>
 
 
 int main(int argc, const char** argv)
@@ -29,30 +30,16 @@ int main(int argc, const char** argv)
     input->Allocate(true);
     input->FillBuffer(0);
 
-    try
-    {
-        tbbTestFilter->SetInput(input);
-        tbbTestFilter->Update();
-        output = tbbTestFilter->GetOutput();
+    tbbTestFilter->SetInput(input);
+    TRY_EXPECT_NO_EXCEPTION(tbbTestFilter->Update());
 
-        itk::ImageRegionConstIterator<ImageType> it(output, output->GetLargestPossibleRegion());
-        while(!it.IsAtEnd())
-        {
-            if(it.Get() != 1)
-            {
-                std::cerr << "TBBImageToImageFilterTest failed:" << std::endl
-                          << "Value: " << it.Get() << " != 1 at: " << it.GetIndex() << std::endl;
-                return EXIT_FAILURE;
-            }
-            ++it;
-        }
-    }
-    catch (itk::ExceptionObject & exception)
-    {
-        std::cerr << "TBBImageToImageFilterTest failed:" << std::endl
-                  << exception;
-        return EXIT_FAILURE;
+    output = tbbTestFilter->GetOutput();
+    itk::ImageRegionConstIterator<ImageType> it(output, output->GetLargestPossibleRegion());
+    int testValue = EXIT_SUCCESS;
+    while(!it.IsAtEnd()) {
+        TEST_EXPECT_EQUAL_STATUS_VALUE(it.Get(), 1, testValue);
+        ++it;
     }
 
-    return EXIT_SUCCESS;
+    return testValue;
 }
