@@ -1,5 +1,5 @@
-#ifndef __itkTBBTestFilter_h
-#define __itkTBBTestFilter_h
+#ifndef itkTBBTestFilter_h
+#define itkTBBTestFilter_h
 
 #include "itkTBBImageToImageFilter.h"
 
@@ -36,4 +36,4 @@ public:
 #include "itkTBBTestFilter.hxx"
 #endif // ITK_MANUAL_INSTANTIATION
 
-#endif // __itkTBBTestFilter_h
+#endif // itkTBBTestFilter_h

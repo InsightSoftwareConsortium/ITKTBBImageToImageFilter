@@ -1,5 +1,5 @@
-#ifndef __itkTBBTestFilter_hxx
-#define __itkTBBTestFilter_hxx
+#ifndef itkTBBTestFilter_hxx
+#define itkTBBTestFilter_hxx
 
 #include <itkImageRegionConstIterator.h>
 #include <itkImageRegionIterator.h>
@@ -24,4 +24,4 @@ void TBBTestFilter<TInputImage, TOutputImage>::TBBGenerateData(const OutputImage
 
 } // itk
 
-#endif // __itkTBBTestFilter_hxx
+#endif // itkTBBTestFilter_hxx
