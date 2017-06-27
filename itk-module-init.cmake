@@ -1,4 +1,4 @@
-# Provide qn option to Use TBB or not.
+# Provide an option to Use TBB or not.
 
 option(ITK_USE_TBB "Thread optimization via TBB" ON)
 if(ITK_USE_TBB)
