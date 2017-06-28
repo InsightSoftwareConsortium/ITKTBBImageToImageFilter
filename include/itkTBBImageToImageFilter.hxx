@@ -415,10 +415,14 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
   // Run the ThreadedGenerateData method!
   this->TBBGenerateData(myRegion);
 }
-
-
 #endif // ITK_USE_TBB
 
+template<typename TInputImage, typename TOutputImage>
+void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
+{
+  os << indent << "Number of Threads: " << GetNumberOfThreads()
+     << indent << "Number of reduce dimensions: " << GetNbReduceDimensions() << std::endl;
+}
 
 }  //namespace itk
 

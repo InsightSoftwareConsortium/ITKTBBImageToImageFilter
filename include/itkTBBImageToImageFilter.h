@@ -105,8 +105,7 @@ public:
   *          nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
   *          nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
   *          nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1)
-  **/
-  void            SetNbReduceDimensions(int);
+  **/  void            SetNbReduceDimensions(int);
 
   virtual const ThreadIdType & GetNumberOfThreads() const;
   virtual void SetNumberOfThreads(ThreadIdType);
@@ -165,10 +164,9 @@ protected:
   static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 
-private:
-  TBBImageToImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  void PrintSelf(std::ostream &os, Indent indent) const;
 
+private:
 #ifndef ITK_USE_TBB
   int                         m_CurrentJobQueueIndex;
   itk::SimpleFastMutexLock    m_JobQueueMutex;
@@ -176,6 +174,7 @@ private:
   unsigned int                m_TBBNumberOfJobs;
   unsigned int                m_TBBNumberOfThreads;
   int                         m_TBBNbReduceDimensions;
+  ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
 };
 
 }   //end namespace itk
