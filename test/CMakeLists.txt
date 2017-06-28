@@ -4,9 +4,6 @@ set(TEST_NAME itkTBBImageToImageFilterTest)
 
 add_executable(${TEST_NAME}
     itkTBBImageToImageFilterTest.cxx
-    # For IDE
-    itkTBBTestFilter.h
-    itkTBBTestFilter.hxx
 )
 
 target_link_libraries(${TEST_NAME}

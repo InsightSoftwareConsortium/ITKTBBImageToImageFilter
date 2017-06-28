@@ -78,6 +78,17 @@ public:
     itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
 
 public:
+    unsigned int    GetNbReduceDimensions() const;
+    void            SetNbReduceDimensions(int);
+
+    virtual const ThreadIdType & GetNumberOfThreads() const;
+    virtual void SetNumberOfThreads(ThreadIdType);
+
+
+protected:
+    TBBImageToImageFilter();
+    ~TBBImageToImageFilter();
+
     /**
      * \fn  template< typename TInputImage, typename TOutputImage >
      *      void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
@@ -98,25 +109,12 @@ public:
      *
      * \return  The number of jobs
      **/
-
-    // TODO Should be protected no? -- rdebroiz
     virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) = 0;
     // use TBBGenerateData instead of ThreadedGenerateData
     virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                                       ThreadIdType threadId) ITK_FINAL;
-
     void GenerateData();
 
-    unsigned int    GetNbReduceDimensions() const;
-    void            SetNbReduceDimensions(int);
-
-    virtual const ThreadIdType & GetNumberOfThreads() const;
-    virtual void SetNumberOfThreads(ThreadIdType);
-
-
-protected:
-    TBBImageToImageFilter();
-    ~TBBImageToImageFilter();
 
     unsigned int    GetNumberOfJobs() const;
     void            SetNumberOfJobs(unsigned int);

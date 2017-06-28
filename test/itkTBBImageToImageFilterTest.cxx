@@ -16,14 +16,62 @@
  *
  *=========================================================================*/
 
-#include <iostream>
-
-#include "itkTBBTestFilter.h"
+#include "itkTBBImageToImageFilter.h"
 
 #include <itkStaticAssert.h>
 #include <itkImageRegionConstIterator.h>
+#include <itkImageRegionIterator.h>
 #include <itkTestingMacros.h>
 
+namespace itk {
+
+template< typename TInputImage, typename TOutputImage >
+class TBBImageToImageFilterHelper : public TBBImageToImageFilter< TInputImage, TOutputImage >
+{
+public:
+    // Standard class typedefs.
+    typedef TBBImageToImageFilterHelper                         Self;
+    typedef TBBImageToImageFilter< TInputImage, TOutputImage >  Superclass;
+    typedef SmartPointer< Self >                                Pointer;
+    typedef SmartPointer< const Self >                          ConstPointer;
+
+    // Superclass typedefs.
+    typedef typename Superclass::OutputImageRegionType          OutputImageRegionType;
+    typedef typename Superclass::OutputImagePixelType           OutputImagePixelType;
+
+    // Run-time type information (and related methods).
+    itkTypeMacro(TBBTestFilter, TBBImageToImageFilter);
+
+    // Method for creation through the object factory
+    itkNewMacro(Self);
+
+protected:
+    virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread)
+    {
+        // Allocate output
+        typename TInputImage::ConstPointer input  = this->GetInput();
+        typename TOutputImage::Pointer output = this->GetOutput();
+
+        ImageRegionConstIterator<TInputImage> iit(input, outputRegionForThread);
+        ImageRegionIterator<TOutputImage> oit(output, outputRegionForThread);
+        while(!iit.IsAtEnd())
+        {
+            oit.Set(iit.Get() + 1);
+            ++iit; ++oit;
+        }
+    }
+public:
+
+    // Helper to test that an exception is raised if ThreadedGenerateData is called
+    void ThreadedGenerateDataHelper()
+    {
+        OutputImageRegionType outputRegionForThread;
+        ThreadIdType threadId;
+        Superclass::ThreadedGenerateData(outputRegionForThread, threadId);
+    }
+};
+
+} // itk
 
 int main(int argc, const char** argv)
 {
@@ -36,19 +84,22 @@ int main(int argc, const char** argv)
     std::cout << "Test TBBImageToImageFilter without TBB library" << std::endl;
 #endif
 
-    typedef itk::Image<short, 2> ImageType;
-    itk::TBBTestFilter<ImageType, ImageType>::Pointer tbbTestFilter = itk::TBBTestFilter<ImageType, ImageType>::New();
+    typedef itk::Image<short, 2>                                    ImageType;
+    typedef itk::TBBImageToImageFilterHelper<ImageType, ImageType>  FIlterType;
+    FIlterType::Pointer tbbTestFilter =                             FIlterType::New();
 
-    ImageType::Pointer input = ImageType::New();
+    ImageType::Pointer input =  ImageType::New();
     ImageType::Pointer output = ImageType::New();
 
-    // TODO get rid of the [-Wmissing-braces]
-    ImageType::SizeType size = {4, 8};
+    ImageType::SizeType size;
+    size[0] = 4;
+    size[1] = 4;
     input->SetRegions(size);
     input->Allocate(true);
     input->FillBuffer(0);
 
     tbbTestFilter->SetInput(input);
+    TRY_EXPECT_EXCEPTION(tbbTestFilter->ThreadedGenerateDataHelper());
     TRY_EXPECT_NO_EXCEPTION(tbbTestFilter->Update());
 
     output = tbbTestFilter->GetOutput();
