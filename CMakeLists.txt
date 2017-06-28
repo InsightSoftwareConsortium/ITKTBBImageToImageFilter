@@ -1,5 +1,7 @@
 project(TBBImageToImageFilter)
 
+file(READ README.md DOCUMENTATION)
+
 if(NOT ITK_SOURCE_DIR)
     cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
     find_package(ITK REQUIRED)
@@ -9,7 +11,7 @@ endif()
 
 if(ITK_USE_TBB)
   set(${PROJECT_NAME}_LIBRARIES tbb)
-  
+
   # When this module is loaded by an app, load TBB too.
     set(${PROJECT_NAME}_EXPORT_CODE_INSTALL "
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
@@ -33,7 +35,7 @@ if(ITK_USE_TBB)
 
     set(${PROJECT_NAME}_SYSTEM_INCLUDE_DIRS ${TBB_INCLUDE_DIRS})
     # TODO ${TBB_LIBRARIES} contains the path to the libraries, not the libraries name. (bug in FindTBB.cmake?)
-    set(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS ${TBB_LIBRARIES}) 
+    set(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS ${TBB_LIBRARIES})
 endif()
 
 if(NOT ITK_SOURCE_DIR)
