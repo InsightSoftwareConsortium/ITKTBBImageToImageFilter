@@ -128,7 +128,7 @@ protected:
   **/
   virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) = 0;
 
- /**
+  /**
  * \brief   Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
  *
  *          \warning TBBImageToImageFilter doesn't support threadId

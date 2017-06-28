@@ -25,51 +25,51 @@
 
 namespace itk {
 
-  template< typename TInputImage, typename TOutputImage >
-  class TBBImageToImageFilterHelper : public TBBImageToImageFilter< TInputImage, TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+class TBBImageToImageFilterHelper : public TBBImageToImageFilter< TInputImage, TOutputImage >
+{
+public:
+  // Standard class typedefs.
+  typedef TBBImageToImageFilterHelper                         Self;
+  typedef TBBImageToImageFilter< TInputImage, TOutputImage >  Superclass;
+  typedef SmartPointer< Self >                                Pointer;
+  typedef SmartPointer< const Self >                          ConstPointer;
+
+  // Superclass typedefs.
+  typedef typename Superclass::OutputImageRegionType          OutputImageRegionType;
+  typedef typename Superclass::OutputImagePixelType           OutputImagePixelType;
+
+  // Run-time type information (and related methods).
+  itkTypeMacro(TBBTestFilter, TBBImageToImageFilter);
+
+  // Method for creation through the object factory
+  itkNewMacro(Self);
+
+protected:
+  virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread)
   {
-  public:
-    // Standard class typedefs.
-    typedef TBBImageToImageFilterHelper                         Self;
-    typedef TBBImageToImageFilter< TInputImage, TOutputImage >  Superclass;
-    typedef SmartPointer< Self >                                Pointer;
-    typedef SmartPointer< const Self >                          ConstPointer;
+    // Allocate output
+    typename TInputImage::ConstPointer input  = this->GetInput();
+    typename TOutputImage::Pointer output = this->GetOutput();
 
-    // Superclass typedefs.
-    typedef typename Superclass::OutputImageRegionType          OutputImageRegionType;
-    typedef typename Superclass::OutputImagePixelType           OutputImagePixelType;
+    ImageRegionConstIterator<TInputImage> iit(input, outputRegionForThread);
+    ImageRegionIterator<TOutputImage> oit(output, outputRegionForThread);
+    while(!iit.IsAtEnd())
+      {
+      oit.Set(iit.Get() + 1);
+      ++iit; ++oit;
+      }
+  }
+public:
 
-    // Run-time type information (and related methods).
-    itkTypeMacro(TBBTestFilter, TBBImageToImageFilter);
-
-    // Method for creation through the object factory
-    itkNewMacro(Self);
-
-  protected:
-    virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread)
-    {
-      // Allocate output
-      typename TInputImage::ConstPointer input  = this->GetInput();
-      typename TOutputImage::Pointer output = this->GetOutput();
-
-      ImageRegionConstIterator<TInputImage> iit(input, outputRegionForThread);
-      ImageRegionIterator<TOutputImage> oit(output, outputRegionForThread);
-      while(!iit.IsAtEnd())
-        {
-          oit.Set(iit.Get() + 1);
-          ++iit; ++oit;
-        }
-    }
-  public:
-
-    // Helper to test that an exception is raised if ThreadedGenerateData is called
-    void ThreadedGenerateDataHelper()
-    {
-      OutputImageRegionType outputRegionForThread;
-      ThreadIdType threadId;
-      Superclass::ThreadedGenerateData(outputRegionForThread, threadId);
-    }
-  };
+  // Helper to test that an exception is raised if ThreadedGenerateData is called
+  void ThreadedGenerateDataHelper()
+  {
+    OutputImageRegionType outputRegionForThread;
+    ThreadIdType threadId;
+    Superclass::ThreadedGenerateData(outputRegionForThread, threadId);
+  }
+};
 
 } // itk
 
@@ -106,8 +106,8 @@ int main(int argc, const char** argv)
   itk::ImageRegionConstIterator<ImageType> it(output, output->GetLargestPossibleRegion());
   int testValue = EXIT_SUCCESS;
   while(!it.IsAtEnd()) {
-      TEST_EXPECT_EQUAL_STATUS_VALUE(it.Get(), 1, testValue);
-      ++it;
+    TEST_EXPECT_EQUAL_STATUS_VALUE(it.Get(), 1, testValue);
+    ++it;
     }
 
   return testValue;
