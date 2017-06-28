@@ -39,14 +39,14 @@ namespace itk {
 
 #ifdef ITK_USE_TBB
 /**
-* \class    TBBFunctor
+* \class      TBBFunctor
 *
-* \brief    TBB functor to execute jobs in parallel.
+* \brief      TBB functor to execute jobs in parallel.
 *
-* \author    Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
+* \author     Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
 *
-* \tparam    TInputImage     Type of the input image.
-* \tparam    TOutputImage    Type of the output image.
+* \tparam     TInputImage     Type of the input image.
+* \tparam     TOutputImage    Type of the output image.
 **/
 template< typename TInputImage, typename TOutputImage >
 class TBBFunctor

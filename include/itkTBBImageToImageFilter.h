@@ -46,6 +46,10 @@ class  TBBFunctor;
   *
   * \tparam  TInputImage     Type of the input image.
   * \tparam  TOutputImage    Type of the output image.
+  *
+  * \sa      ImageToImageFilter
+  *
+  * \ingroup ITKTBBImageToImageFilter
   **/
 template< typename TInputImage, typename TOutputImage >
 class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputImage>
