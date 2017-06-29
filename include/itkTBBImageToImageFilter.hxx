@@ -37,69 +37,6 @@
 
 namespace itk {
 
-#ifdef ITK_USE_TBB
-/**
-* \class      TBBFunctor
-*
-* \brief      TBB functor to execute jobs in parallel.
-*
-* \author     Amir Jaberzadeh, Benoit Scherrer and Etienne St-Onge
-*
-* \tparam     TInputImage     Type of the input image.
-* \tparam     TOutputImage    Type of the output image.
-**/
-template< typename TInputImage, typename TOutputImage >
-class TBBFunctor
-{
-public:
-  typedef TBBFunctor                              Self;
-  typedef TOutputImage                            OutputImageType;
-  typedef typename OutputImageType::ConstPointer  OutputImageConstPointer;
-  typedef typename TOutputImage::SizeType         OutputImageSizeType;
-  typedef typename OutputImageType::RegionType    OutputImageRegionType;
-
-  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
-
-  typedef TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
-
-  TBBFunctor(TbbImageFilterType *tbbFilter, const OutputImageSizeType& outputSize):
-    m_TBBFilter(tbbFilter), m_OutputSize(outputSize) {}
-
-  void operator() ( const tbb::blocked_range<int>& r ) const
-  {
-    typename TOutputImage::SizeType size = m_OutputSize;
-    typename TOutputImage::IndexType index;
-    index.Fill(0);
-
-    if (m_TBBFilter->GetNbReduceDimensions() > 0)
-      {
-      unsigned int i = OutputImageDimension - (unsigned int)m_TBBFilter->GetNbReduceDimensions();
-
-      index[i] = r.begin();
-      size[i] = 1;
-      while (i < OutputImageDimension - 1)
-        {
-        index[i+1] = index[i] / m_OutputSize[i];
-        index[i] = index[i] % m_OutputSize[i];
-        size[i+1] = 1;
-        i++;
-        }
-      }
-
-    // Construct an itk::ImageRegion
-    OutputImageRegionType myRegion(index, size);
-
-    // Run the TBBGenerateData method! (equivalent of ThreadedGenerateData)
-    m_TBBFilter->TBBGenerateData(myRegion);
-  }
-
-private:
-  TbbImageFilterType *m_TBBFilter;
-  OutputImageSizeType m_OutputSize;
-};
-#endif // ITK_USE_TBB
-
 // Constructor
 template< typename TInputImage, typename TOutputImage >
 TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
@@ -228,9 +165,9 @@ unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNbReduceDime
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(int nbReduceDim)
 {
-  if (nbReduceDim > (int)OutputImageDimension)
+  if (nbReduceDim > static_cast<int>(OutputImageDimension))
     {
-    this->m_TBBNbReduceDimensions = (int)OutputImageDimension;
+    this->m_TBBNbReduceDimensions = static_cast<int>(OutputImageDimension);
     }
   else
     {
@@ -267,8 +204,7 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
     }
   else
     {
-    // If manually chosen m_TBBNbReduceDimensions
-    // Fixed (preset NbReduceDimensions)
+    // If manually chosen m_TBBNbReduceDimensions, compute number of jobs accordingly.
     m_TBBNumberOfJobs = 1;
     for (unsigned int i = OutputImageDimension - GetNbReduceDimensions(); i < OutputImageDimension; ++i)
       {
@@ -289,22 +225,6 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(co
 }
 
 #ifndef ITK_USE_TBB
-
-/**
-* \fn   template< typename TInputImage, typename TOutputImage > ITK_THREAD_RETURN_TYPE MyITKImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
-*
-* \brief    Internal function. Callback method for the multithreader.
-*
-* \author   Benoit Scherrer
-* \date October 2016
-*
-* \exception    Thrown an exception if an error occurs.
-*
-* \tparam   TInputImage     Type of the input image.
-* \tparam   TOutputImage    Type of the output image.
-* \param [in,out]   Poiner to the itk::MultiThreader::ThreadInfoStruct
-**/
-
 template< typename TInputImage, typename TOutputImage >
 ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
 {
@@ -339,19 +259,6 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
   return ITK_THREAD_RETURN_VALUE;
 }
 
-/**
-* \fn   template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
-*
-* \brief    Gets the next job.
-*
-* \author   Benoit Scherrer
-* \date October 2016
-*
-* \tparam   TInputImage     Type of the input image.
-* \tparam   TOutputImage    Type of the output image.
-*
-* \return   The next job&lt;typename t input image,typename t output image &gt;
-**/
 template< typename TInputImage, typename TOutputImage >
 int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 {
@@ -369,20 +276,6 @@ int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
   return jobId;
 }
 
-/**
-* \fn   template< typename TInputImage, typename TOutputImage > int MyITKImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
-*
-* \brief    Executes the job identified by jobId.
-*
-* \author   Benoit Scherrer
-* \date October 2016
-*
-* \tparam   TInputImage     Type of the input image.
-* \tparam   TOutputImage    Type of the output image.
-* \param    jobId   Identifier for the job.
-*
-* \return   .
-**/
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 {
@@ -417,12 +310,44 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 }
 #endif // ITK_USE_TBB
 
+#ifdef ITK_USE_TBB
 template<typename TInputImage, typename TOutputImage>
 void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
 {
   os << indent << "Number of Threads: " << GetNumberOfThreads()
      << indent << "Number of reduce dimensions: " << GetNbReduceDimensions() << std::endl;
 }
+
+template<typename TInputImage, typename TOutputImage>
+void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
+{
+  typename TOutputImage::SizeType size = m_OutputSize;
+  typename TOutputImage::IndexType index;
+  index.Fill(0);
+
+  if (m_TBBFilter->GetNbReduceDimensions() > 0)
+    {
+    unsigned int i = OutputImageDimension -
+        static_cast<unsigned int>(m_TBBFilter->GetNbReduceDimensions());
+
+    index[i] = r.begin();
+    size[i] = 1;
+    while (i < OutputImageDimension - 1)
+      {
+      index[i+1] = index[i] / m_OutputSize[i];
+      index[i] = index[i] % m_OutputSize[i];
+      size[i+1] = 1;
+      i++;
+      }
+    }
+
+  // Construct an itk::ImageRegion
+  OutputImageRegionType myRegion(index, size);
+
+  // Run the TBBGenerateData method! (equivalent of ThreadedGenerateData)
+  m_TBBFilter->TBBGenerateData(myRegion);
+}
+#endif // ITK_USE_TBB
 
 }  //namespace itk
 

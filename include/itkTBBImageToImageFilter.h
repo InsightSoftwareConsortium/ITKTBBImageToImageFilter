@@ -29,28 +29,28 @@ class  TBBFunctor;
 #endif // ITK_USE_TBB
 
 /**
-  * \class   TBBImageToImageFilter
-  *
-  * \brief   ImageToImageFilter using Intel Threading Building Blocks (TBB) parallelization
-  *          Multithreading with Thread and Job pool
-  *          Insight Journal artical: http://www.insight-journal.org/browse/publication/974
-  *
-  * \details If an imaging filter can be implemented as a TBB multithreaded algorithm,
-  *          the filter will provide an implementation of TBBGenerateData().
-  *          This superclass will automatically split the output image into a number of pieces,
-  *          spawn multiple threads, and call TBBGenerateData() in each thread.
-  *          Prior to spawning threads, the BeforeThreadedGenerateData() method is called.
-  *          After all the threads have completed, the AfterThreadedGenerateData() method is called.
-  *
-  * \author  Amir Jaberzadeh, Benoit Scherrer, Etienne St-Onge and Simon Warfield
-  *
-  * \tparam  TInputImage     Type of the input image.
-  * \tparam  TOutputImage    Type of the output image.
-  *
-  * \sa      ImageToImageFilter
-  *
-  * \ingroup ITKTBBImageToImageFilter
-  **/
+ * \class   TBBImageToImageFilter
+ *
+ * \brief   ImageToImageFilter using Intel Threading Building Blocks (TBB) parallelization
+ *          Multithreading with Thread and Job pool
+ *          Insight Journal artical: http://www.insight-journal.org/browse/publication/974
+ *
+ *          If an imaging filter can be implemented as a TBB multithreaded algorithm,
+ *          the filter will provide an implementation of TBBGenerateData().
+ *          This superclass will automatically split the output image into a number of pieces,
+ *          spawn multiple threads, and call TBBGenerateData() in each thread.
+ *          Prior to spawning threads, the BeforeThreadedGenerateData() method is called.
+ *          After all the threads have completed, the AfterThreadedGenerateData() method is called.
+ *
+ * \sa      ImageToImageFilter
+ *
+ * \ingroup Remote
+ *
+ * \tparam  TInputImage     Type of the input image.
+ * \tparam  TOutputImage    Type of the output image.
+ *
+ * \author  Amir Jaberzadeh, Benoit Scherrer, Etienne St-Onge and Simon Warfield
+ **/
 template< typename TInputImage, typename TOutputImage >
 class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputImage>
 {
@@ -92,20 +92,21 @@ public:
 public:
 
   /**
-   * \brief Gets the number of dimension to separate for the Jobs multithreading
+   * \brief  Gets the number of dimension to separate for the Jobs multithreading
    *
    */
   unsigned int    GetNbReduceDimensions() const;
 
   /**
-  * \brief   Set the number of dimension to separate and multithread each section.
-  *          (nbReduceDim < 0  : negative number for automatic splitting)
-  *          \example : for a 3D image (volume) with the shape 30x10x5
-  *          nbReduceDim == 0  : Will generate a single (1) Job with the whole image (size 30x10x5)
-  *          nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
-  *          nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
-  *          nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1)
-  **/  void            SetNbReduceDimensions(int);
+   * \brief  Set the number of dimension to separate and multithread each section.
+   *         (nbReduceDim < 0  : negative number for automatic splitting)
+   *         \example : for a 3D image (volume) with the shape 30x10x5
+   *         nbReduceDim == 0  : Will generate a single (1) Job with the whole image (size 30x10x5)
+   *         nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
+   *         nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
+   *         nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1)
+   **/
+  void            SetNbReduceDimensions(int);
 
   virtual const ThreadIdType & GetNumberOfThreads() const;
   virtual void SetNumberOfThreads(ThreadIdType);
@@ -116,51 +117,68 @@ protected:
   ~TBBImageToImageFilter();
 
   /**
-  * \brief   If an imaging filter can be implemented as a TBB multithreaded algorithm,
-  *          the filter will provide an implementation of TBBGenerateData().
-  *          This superclass will automatically split the output image into a number of pieces,
-  *          spawn multiple threads, and call TBBGenerateData() in each thread.
-  *          Prior to spawning threads, the BeforeThreadedGenerateData() method is called.
-  *          After all the threads have completed, the AfterThreadedGenerateData() method is called.
-  *
-  *          \warning TBBImageToImageFilter doesn't support threadId
-  **/
+   * \brief  If an imaging filter can be implemented as a TBB multithreaded algorithm,
+   *         the filter will provide an implementation of TBBGenerateData().
+   *         This superclass will automatically split the output image into a number of pieces,
+   *         spawn multiple threads, and call TBBGenerateData() in each thread.
+   *         Prior to spawning threads, the BeforeThreadedGenerateData() method is called.
+   *         After all the threads have completed, the AfterThreadedGenerateData() method is called.
+   *         \warning TBBImageToImageFilter doesn't support threadId
+   **/
   virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) = 0;
 
-  /**
- * \brief   Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
- *
- *          \warning TBBImageToImageFilter doesn't support threadId
- **/
+ /**
+  * \brief   Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
+  *          \warning TBBImageToImageFilter doesn't support threadId
+  **/
   virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                                     ThreadIdType threadId) ITK_FINAL;
 
   /**
-  * \brief    New default implementation for GenerateData() to use TBB
-  **/
+   * \brief  New default implementation for GenerateData() to use TBB
+   **/
   void GenerateData();
 
 
   /**
-  * \brief    Gets the number of jobs.
-  **/
+   * \brief  Gets the number of jobs.
+   **/
   unsigned int    GetNumberOfJobs() const;
+
   /**
-  * \brief   Sets the number of jobs (Internal).
-  **/
+   * \brief  Sets the number of jobs (Internal).
+   **/
   void            SetNumberOfJobs(unsigned int);
+
   /**
-  * \brief   Generate the number Jobs based on the NbReduceDimensions
-  *          or based on the NumberOfThreads and the Image Dimension
-  *          (if NbReduceDimensions was not set).
-  *          \warning  This function must be called after the NumberOfThreads is set.
-  **/
+   * \brief  Generate the number Jobs based on the NbReduceDimensions
+   *         or based on the NumberOfThreads and the Image Dimension
+   *         (if NbReduceDimensions was not set).
+   *         \warning  This function must be called after the NumberOfThreads is set.
+   **/
   void            GenerateNumberOfJobs();
 
 #ifndef ITK_USE_TBB
-  int             GetNextJob();
-  void            ExecuteJob( int jobId );
-  void            ResetJobQueue();
+
+  /**
+   * \brief    Gets the next job.
+   **/
+  int                           GetNextJob();
+
+  /**
+   * \brief    Executes the job identified by jobId.
+   **/
+  void                          ExecuteJob( int jobId );
+
+  void                          ResetJobQueue();
+
+  /**
+   * \brief    Internal function. Callback method for the multithreader.
+   *
+   * \exception    Thrown an exception if an error occurs.
+   *
+   * \param [in,out]   Poiner to the itk::MultiThreader::ThreadInfoStruct
+   **/
   static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 
@@ -174,8 +192,54 @@ private:
   unsigned int                m_TBBNumberOfJobs;
   unsigned int                m_TBBNumberOfThreads;
   int                         m_TBBNbReduceDimensions;
+
   ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
 };
+
+
+#ifdef ITK_USE_TBB
+/**
+ * \class    TBBFunctor
+ *
+ * \brief    TBB functor to execute jobs in parallel.
+ *
+ * \sa       TBBImageToImageFilter
+ *
+ * \ingroup  Remote
+ *
+ * \tparam   TInputImage     Type of the input image.
+ * \tparam   TOutputImage    Type of the output image.
+ *
+ * \author   Amir Jaberzadeh, Benoit Scherrer, Etienne St-Onge and Simon Warfield
+ *
+ **/
+template< typename TInputImage, typename TOutputImage >
+class TBBFunctor
+{
+public:
+  typedef TBBFunctor                              Self;
+  typedef TOutputImage                            OutputImageType;
+  typedef typename OutputImageType::ConstPointer  OutputImageConstPointer;
+  typedef typename TOutputImage::SizeType         OutputImageSizeType;
+  typedef typename OutputImageType::RegionType    OutputImageRegionType;
+
+  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
+  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
+
+  typedef TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
+
+  TBBFunctor(TbbImageFilterType *tbbFilter, const OutputImageSizeType& outputSize):
+    m_TBBFilter(tbbFilter), m_OutputSize(outputSize)
+  {
+  }
+
+  void operator() ( const tbb::blocked_range<int>& r ) const;
+
+private:
+  TbbImageFilterType *m_TBBFilter;
+  OutputImageSizeType m_OutputSize;
+};
+#endif // ITK_USE_TBB
 
 }   //end namespace itk
 
