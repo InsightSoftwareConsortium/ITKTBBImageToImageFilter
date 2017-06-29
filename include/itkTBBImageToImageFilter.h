@@ -45,7 +45,7 @@ class  TBBFunctor;
  *
  * \sa ImageToImageFilter
  *
- * \ingroup Remote
+ * \ingroup TBBImageToImageFilter
  *
  * \tparam TInputImage     Type of the input image.
  * \tparam TOutputImage    Type of the output image.
@@ -183,7 +183,7 @@ private:
  *
  * \sa TBBImageToImageFilter
  *
- * \ingroup Remote
+ * \ingroup TBBImageToImageFilter
  *
  * \tparam TInputImage     Type of the input image.
  * \tparam TOutputImage    Type of the output image.
