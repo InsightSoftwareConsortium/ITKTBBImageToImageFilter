@@ -38,6 +38,8 @@ if(ITK_USE_TBB)
     set(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS ${TBB_LIBRARIES})
 else()
   # TODO this should not be needed.
+  # But if it is not done, CMake continues to link against libtbb and the flag -DITK_USE_TBB is still defined
+  # After a previous build using TBB.
   unset(${PROJECT_NAME}_LIBRARIES)
   unset(${PROJECT_NAME}_SYSTEM_INCLUDE_DIRS)
   unset(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS)
