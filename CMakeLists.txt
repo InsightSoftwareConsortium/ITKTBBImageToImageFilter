@@ -37,6 +37,7 @@ if(ITK_USE_TBB)
     # TODO ${TBB_LIBRARIES} contains the path to the libraries, not the libraries name. (bug in FindTBB.cmake?)
     set(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS ${TBB_LIBRARIES})
 else()
+  # TODO this should not be needed.
   unset(${PROJECT_NAME}_LIBRARIES)
   unset(${PROJECT_NAME}_SYSTEM_INCLUDE_DIRS)
   unset(${PROJECT_NAME}_SYSTEM_LIBRARY_DIRS)
