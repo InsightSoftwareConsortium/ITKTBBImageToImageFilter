@@ -34,7 +34,7 @@ class  TBBFunctor;
  * \brief ImageToImageFilter using Intel Threading Building Blocks (TBB) parallelization
  *        Multithreading with Thread and Job pool
  *
- * Insight Journal artical: http://www.insight-journal.org/browse/publication/974
+ * Insight Journal article: http://www.insight-journal.org/browse/publication/974
  *
  * If an imaging filter can be implemented as a TBB multithreaded algorithm,
  * the filter will provide an implementation of TBBGenerateData().
@@ -85,6 +85,11 @@ public:
   typedef TOutputImage                                    OutputImageType;
   typedef typename TOutputImage::SizeType                 OutputImageSizeType;
 
+  /** Type to count and reference number of jobs */
+  typedef unsigned int        JobIdType;
+  /** Type to count the number of dimesions to separate the Jobs multithreading */
+  typedef int                 DimensionReductionType;
+
 
   // ImageDimension constants
   itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
@@ -93,7 +98,7 @@ public:
 public:
 
   /** Gets the number of dimension to separate for the Jobs multithreading */
-  unsigned int    GetNbReduceDimensions() const;
+  itkGetConstMacro(NumberOfDimensionToReduce, DimensionReductionType);
 
   /** Set the number of dimension to separate and multithread each section.
    * (nbReduceDim < 0  : negative number for automatic splitting)
@@ -102,8 +107,9 @@ public:
    * nbReduceDim == 1  : Will generate 5 Jobs with the slices (size 30x10)
    * nbReduceDim == 2  : Will generate 50 Jobs with the lines (size 30)
    * nbReduceDim == 3  : Will generate 1500 Jobs with each voxel (size 1) */
-  void            SetNbReduceDimensions(int);
+  void SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce);
 
+  // redefinition so we can use our own member if ITK_USE_TBB is defined
   virtual const ThreadIdType & GetNumberOfThreads() const;
   virtual void SetNumberOfThreads(ThreadIdType);
 
@@ -131,17 +137,15 @@ protected:
   void GenerateData();
 
 
-  /** Gets the number of jobs. */
-  unsigned int    GetNumberOfJobs() const;
-
-  /** Sets the number of jobs (Internal). */
-  void            SetNumberOfJobs(unsigned int);
+  /** Set/Get the number of jobs (Internal). */
+   itkGetConstMacro( NumberOfJobs, JobIdType );
+   itkSetMacro( NumberOfJobs, JobIdType );
 
   /** Generate the number Jobs based on the NbReduceDimensions
    * or based on the NumberOfThreads and the Image Dimension
    * (if NbReduceDimensions was not set).
    * \warning  This function must be called after the NumberOfThreads is set. */
-  void            GenerateNumberOfJobs();
+  void GenerateNumberOfJobs();
 
 #ifndef ITK_USE_TBB
 
@@ -163,15 +167,19 @@ protected:
   void PrintSelf(std::ostream &os, Indent indent) const;
 
 private:
+  ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
+
+  JobIdType                   m_NumberOfJobs;
+  DimensionReductionType      m_NumberOfDimensionToReduce;
+
 #ifndef ITK_USE_TBB
   int                         m_CurrentJobQueueIndex;
-  itk::SimpleFastMutexLock    m_JobQueueMutex;
+  itk::SimpleFastMutexLock    m_JobQueueMutex;  
+#else
+  // Use to ensure that the number of thread can't be modify by one of the classs inherited.
+  ThreadIdType                m_TBBNumberOfThreads;
 #endif // ITK_USE_TBB
-  unsigned int                m_TBBNumberOfJobs;
-  unsigned int                m_TBBNumberOfThreads;
-  int                         m_TBBNbReduceDimensions;
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
 };
 
 

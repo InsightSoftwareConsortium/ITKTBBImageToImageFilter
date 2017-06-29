@@ -42,7 +42,7 @@ template< typename TInputImage, typename TOutputImage >
 TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
 {
   // By default, Automatic NbReduceDimensions
-  this->SetNbReduceDimensions(-1);
+  this->SetNumberOfDimensionToReduce(-1);
 
   // We d'ont need itk::barrier, itk::MultiThreader::SingleMethodeExecute
   // is already taking care of that job, (using itk::MultiThreader::WaitForSingleMethodThread)
@@ -142,36 +142,17 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfThreads(Thre
 #endif // ITK_USE_TBB
 }
 
-
 template< typename TInputImage, typename TOutputImage >
-unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfJobs() const
+void TBBImageToImageFilter< TInputImage, TOutputImage >::
+  SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce)
 {
-  return m_TBBNumberOfJobs;
-}
-
-template< typename TInputImage, typename TOutputImage >
-void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfJobs(unsigned int nbJobs)
-{
-  this->m_TBBNumberOfJobs = nbJobs;
-}
-
-template< typename TInputImage, typename TOutputImage >
-unsigned int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNbReduceDimensions() const
-{
-  return m_TBBNbReduceDimensions;
-}
-
-
-template< typename TInputImage, typename TOutputImage >
-void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNbReduceDimensions(int nbReduceDim)
-{
-  if (nbReduceDim > static_cast<int>(OutputImageDimension))
+  if (NumberOfDimensionToReduce > static_cast<int>(OutputImageDimension))
     {
-    this->m_TBBNbReduceDimensions = static_cast<int>(OutputImageDimension);
+    this->m_NumberOfDimensionToReduce = static_cast<int>(OutputImageDimension);
     }
   else
     {
-    this->m_TBBNbReduceDimensions = nbReduceDim;
+    this->m_NumberOfDimensionToReduce = nbReduceDim;
     }
 }
 
@@ -183,35 +164,34 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
   typename TOutputImage::SizeType outputSize = output->GetRequestedRegion().GetSize();
 
   // Generate the number of job
-  if (m_TBBNbReduceDimensions < 0)
+  if (m_NumberOfDimensionToReduce < 0)
     {
     // assert (GetNumberOfThreads()>0)
     // This function must be called after the NumberOfThreads is Set
 
     // Heuristic NbReduceDimensions
-    m_TBBNbReduceDimensions = 0;
-    m_TBBNumberOfJobs = 1;
+    m_NumberOfDimensionToReduce = 0;
+    m_NumberOfJobs = 1;
     int current_dim = OutputImageDimension-1;
 
     // Minimum Number of Jobs, based on the Number of thread
     unsigned int minNbJobs = JOB_PER_THREAD_RATIO * this->GetNumberOfThreads();
-    while( current_dim >= 0 && m_TBBNumberOfJobs < minNbJobs )
+    while( current_dim >= 0 && m_NumberOfJobs < minNbJobs )
       {
-      ++m_TBBNbReduceDimensions;
-      m_TBBNumberOfJobs *= outputSize[current_dim];
+      ++m_NumberOfDimensionToReduce;
+      m_NumberOfJobs *= outputSize[current_dim];
       --current_dim;
       }
     }
   else
     {
     // If manually chosen m_TBBNbReduceDimensions, compute number of jobs accordingly.
-    m_TBBNumberOfJobs = 1;
-    for (unsigned int i = OutputImageDimension - GetNbReduceDimensions(); i < OutputImageDimension; ++i)
+    m_NumberOfJobs = 1;
+    for (unsigned int i = OutputImageDimension - GetNumberOfDimensionToReduce(); i < OutputImageDimension; ++i)
       {
-      m_TBBNumberOfJobs *= outputSize[i];
+      m_NumberOfJobs *= outputSize[i];
       }
     }
-
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -236,7 +216,8 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
 
   // Work on the workpile
   int jobId;
-  try {
+  try
+  {
   while ( (jobId=instance->GetNextJob())>=0 )
     {
     instance->ExecuteJob(jobId);
@@ -315,7 +296,7 @@ template<typename TInputImage, typename TOutputImage>
 void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
 {
   os << indent << "Number of Threads: " << GetNumberOfThreads()
-     << indent << "Number of reduce dimensions: " << GetNbReduceDimensions() << std::endl;
+     << indent << "Number of reduce dimensions: " << GetNumberOfDimensionToReduce() << std::endl;
 }
 
 template<typename TInputImage, typename TOutputImage>
@@ -325,10 +306,10 @@ void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
   typename TOutputImage::IndexType index;
   index.Fill(0);
 
-  if (m_TBBFilter->GetNbReduceDimensions() > 0)
+  if (m_TBBFilter->GetNumberOfDimensionToReduce() > 0)
     {
     unsigned int i = OutputImageDimension -
-        static_cast<unsigned int>(m_TBBFilter->GetNbReduceDimensions());
+        static_cast<unsigned int>(m_TBBFilter->GetNumberOfDimensionToReduce());
 
     index[i] = r.begin();
     size[i] = 1;
