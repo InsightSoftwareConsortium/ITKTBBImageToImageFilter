@@ -150,12 +150,13 @@ protected:
 #ifndef ITK_USE_TBB
 
   /** Gets the next job.*/
-  int                           GetNextJob();
+  int GetNextJob();
 
   /** Executes the job identified by jobId. */
-  void                          ExecuteJob( int jobId );
+  void ExecuteJob( int jobId );
 
-  void                          ResetJobQueue();
+  /** Reset the job queu index to 0.*/
+  void ResetJobQueue();
 
   /** Internal function. Callback method for the multithreader.
    *

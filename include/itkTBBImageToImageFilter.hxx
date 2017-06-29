@@ -108,6 +108,9 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateData()
   // based on the OutputImageDimension, NumberOfThreads and NbReduceDimensions
   this->GenerateNumberOfJobs();
 
+  // Reinitialize current job index
+  this->ResetJobQueue();
+
   // Set up the multithreaded processing
   this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->MyThreaderCallback, (void *)this );
@@ -288,6 +291,12 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 
   // Run the ThreadedGenerateData method!
   this->TBBGenerateData(myRegion);
+}
+
+template< typename TInputImage, typename TOutputImage >
+ void MyITKImageToImageFilter< TInputImage, TOutputImage >::ResetJobQueue()
+{
+  this->m_CurrentJobQueueIndex = 0;
 }
 #endif // ITK_USE_TBB
 
