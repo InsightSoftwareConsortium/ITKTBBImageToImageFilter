@@ -49,7 +49,7 @@ class  TBBFunctor;
   *
   * \sa      ImageToImageFilter
   *
-  * \ingroup ITKTBBImageToImageFilter
+  * \ingroup Remote
   **/
 template< typename TInputImage, typename TOutputImage >
 class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputImage>
