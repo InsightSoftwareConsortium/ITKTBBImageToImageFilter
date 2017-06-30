@@ -35,9 +35,9 @@
 #include <tbb/tick_count.h>
 #endif // ITK_USE_TBB
 
-namespace itk {
+namespace itk
+{
 
-// Constructor
 template< typename TInputImage, typename TOutputImage >
 TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
 {
@@ -56,7 +56,6 @@ TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
 #endif // ITK_USE_TBB
 }
 
-// Destructor
 template< typename TInputImage, typename TOutputImage >
 TBBImageToImageFilter< TInputImage, TOutputImage >::~TBBImageToImageFilter()
 {
@@ -220,26 +219,25 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
   // Work on the workpile
   int jobId;
   try
-  {
-  while ( (jobId=instance->GetNextJob())>=0 )
     {
-    instance->ExecuteJob(jobId);
+    while ( (jobId=instance->GetNextJob())>=0 )
+      {
+      instance->ExecuteJob(jobId);
+      }
     }
-  }
   catch (itk::ExceptionObject& e)
-  {
+    {
     std::cout<< "THREAD ID"<<threadId<<" / JOB ID << " << jobId << ": ITK EXCEPTION ERROR CAUGHT"<<std::endl
              << e.GetDescription() << std::endl << "Cannot continue." << std::endl;
     throw e;
-  }
+    }
   catch ( ... )
-  {
-  std::cout<<"THREAD ID"<<threadId<<" / JOB ID << " << jobId << " : UNKNOWN EXCEPTION ERROR." << std::endl
-          << "Cannot continue."<< std::endl;
-  throw;
-  }
+    {
+    std::cout<<"THREAD ID"<<threadId<<" / JOB ID << " << jobId << " : UNKNOWN EXCEPTION ERROR." << std::endl
+            << "Cannot continue."<< std::endl;
+    throw;
+    }
 
-  // Exit!
   return ITK_THREAD_RETURN_VALUE;
 }
 
@@ -250,7 +248,7 @@ int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
 
   this->m_JobQueueMutex.Lock();
   if (m_CurrentJobQueueIndex == static_cast<int>(m_TBBNumberOfJobs))
-    jobId=-1;
+    jobId = -1;
   else
     {
     jobId = m_CurrentJobQueueIndex;

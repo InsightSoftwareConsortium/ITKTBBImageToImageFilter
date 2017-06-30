@@ -21,7 +21,8 @@
 
 #include <itkImageToImageFilter.h>
 
-namespace itk {
+namespace itk
+{
 
 #ifdef ITK_USE_TBB
 template< typename TInputImage, typename TOutputImage >
@@ -128,7 +129,7 @@ protected:
    **/
   virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) = 0;
 
- /** Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
+  /** Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
   * \warning TBBImageToImageFilter doesn't support threadId */
   virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                                     ThreadIdType threadId) ITK_FINAL;
