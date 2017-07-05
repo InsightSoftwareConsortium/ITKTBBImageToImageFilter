@@ -21,12 +21,12 @@
 
 #include <itkImageToImageFilter.h>
 
+
 namespace itk
 {
-
 #ifdef ITK_USE_TBB
 template< typename TInputImage, typename TOutputImage >
-class  TBBFunctor;
+class TBBFunctor;
 #endif // ITK_USE_TBB
 
 /**
@@ -139,8 +139,8 @@ protected:
 
 
   /** Set/Get the number of jobs (Internal). */
-   itkGetConstMacro( NumberOfJobs, JobIdType );
-   itkSetMacro( NumberOfJobs, JobIdType );
+  itkGetConstMacro( NumberOfJobs, JobIdType );
+  itkSetMacro( NumberOfJobs, JobIdType );
 
   /** Generate the number Jobs based on the NbReduceDimensions
    * or based on the NumberOfThreads and the Image Dimension
@@ -149,7 +149,6 @@ protected:
   void GenerateNumberOfJobs();
 
 #ifndef ITK_USE_TBB
-
   /** Gets the next job.*/
   int GetNextJob();
 
@@ -166,7 +165,7 @@ protected:
   static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 
-  void PrintSelf(std::ostream &os, Indent indent) const;
+  virtual void PrintSelf(std::ostream &os, Indent indent) const;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
@@ -176,16 +175,20 @@ private:
 
 #ifndef ITK_USE_TBB
   int                         m_CurrentJobQueueIndex;
-  itk::SimpleFastMutexLock    m_JobQueueMutex;  
+  itk::SimpleFastMutexLock    m_JobQueueMutex;
 #else
   // Use to ensure that the number of thread can't be modify by one of the classs inherited.
   ThreadIdType                m_TBBNumberOfThreads;
 #endif // ITK_USE_TBB
 
 };
-
+}   //end namespace itk
 
 #ifdef ITK_USE_TBB
+#include <tbb/blocked_range.h>
+
+namespace itk {
+
 /**
  * \class TBBFunctor
  *
@@ -201,6 +204,7 @@ private:
  * \author Amir Jaberzadeh, Benoit Scherrer, Etienne St-Onge and Simon Warfield
  *
  **/
+
 template< typename TInputImage, typename TOutputImage >
 class TBBFunctor
 {
@@ -214,7 +218,7 @@ public:
   itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
 
-  typedef TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
+  typedef itk::TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
 
   TBBFunctor(TbbImageFilterType *tbbFilter, const OutputImageSizeType& outputSize):
     m_TBBFilter(tbbFilter), m_OutputSize(outputSize)
@@ -227,9 +231,9 @@ private:
   TbbImageFilterType *m_TBBFilter;
   OutputImageSizeType m_OutputSize;
 };
-#endif // ITK_USE_TBB
 
-}   //end namespace itk
+} // itk
+#endif // ITK_USE_TBB
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkTBBImageToImageFilter.hxx"

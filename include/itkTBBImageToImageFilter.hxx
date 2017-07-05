@@ -29,7 +29,6 @@
 
 #ifdef ITK_USE_TBB
 #include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
 #include <tbb/task_scheduler_init.h>
 #include <tbb/compat/thread>
 #include <tbb/tick_count.h>
@@ -51,8 +50,6 @@ TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
   // By default, do not define the number of threads.
   // Let TBB doing that.
   this->SetNumberOfThreads(0);
-#else
-
 #endif // ITK_USE_TBB
 }
 
@@ -146,7 +143,7 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfThreads(Thre
 
 template< typename TInputImage, typename TOutputImage >
 void TBBImageToImageFilter< TInputImage, TOutputImage >::
-  SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce)
+SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce)
 {
   if (NumberOfDimensionToReduce > static_cast<int>(OutputImageDimension))
     {
@@ -154,7 +151,7 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::
     }
   else
     {
-    this->m_NumberOfDimensionToReduce = nbReduceDim;
+    this->m_NumberOfDimensionToReduce = NumberOfDimensionToReduce;
     }
 }
 
@@ -219,24 +216,24 @@ ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThr
   // Work on the workpile
   int jobId;
   try
+  {
+  while ( (jobId=instance->GetNextJob())>=0 )
     {
-    while ( (jobId=instance->GetNextJob())>=0 )
-      {
-      instance->ExecuteJob(jobId);
-      }
+    instance->ExecuteJob(jobId);
     }
+  }
   catch (itk::ExceptionObject& e)
-    {
+  {
     std::cout<< "THREAD ID"<<threadId<<" / JOB ID << " << jobId << ": ITK EXCEPTION ERROR CAUGHT"<<std::endl
              << e.GetDescription() << std::endl << "Cannot continue." << std::endl;
     throw e;
-    }
+  }
   catch ( ... )
-    {
-    std::cout<<"THREAD ID"<<threadId<<" / JOB ID << " << jobId << " : UNKNOWN EXCEPTION ERROR." << std::endl
-            << "Cannot continue."<< std::endl;
-    throw;
-    }
+  {
+  std::cout<<"THREAD ID"<<threadId<<" / JOB ID << " << jobId << " : UNKNOWN EXCEPTION ERROR." << std::endl
+          << "Cannot continue."<< std::endl;
+  throw;
+  }
 
   return ITK_THREAD_RETURN_VALUE;
 }
@@ -247,7 +244,7 @@ int TBBImageToImageFilter< TInputImage, TOutputImage >::GetNextJob()
   int jobId = -1;
 
   this->m_JobQueueMutex.Lock();
-  if (m_CurrentJobQueueIndex == static_cast<int>(m_TBBNumberOfJobs))
+  if (m_CurrentJobQueueIndex == static_cast<int>(m_NumberOfJobs))
     jobId = -1;
   else
     {
@@ -269,9 +266,10 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
   typename TOutputImage::IndexType index;
   index.Fill(0);
 
-  if (this->GetNbReduceDimensions() > 0)
+  if (this->GetNumberOfDimensionToReduce() > 0)
     {
-    unsigned int i = OutputImageDimension - (unsigned int)this->GetNbReduceDimensions();
+    unsigned int i = OutputImageDimension -
+        static_cast<unsigned int>(this->GetNumberOfDimensionToReduce());
 
     index[i] = jobId;
     size[i] = 1;
@@ -292,15 +290,32 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::ExecuteJob( int jobId )
 }
 
 template< typename TInputImage, typename TOutputImage >
- void MyITKImageToImageFilter< TInputImage, TOutputImage >::ResetJobQueue()
+void TBBImageToImageFilter< TInputImage, TOutputImage >::ResetJobQueue()
 {
   this->m_CurrentJobQueueIndex = 0;
 }
 #endif // ITK_USE_TBB
 
-#ifdef ITK_USE_TBB
 template<typename TInputImage, typename TOutputImage>
-void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
+void TBBImageToImageFilter< TInputImage, TOutputImage >::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf( os, indent );
+
+  os << indent << "Number of Jobs: "
+     << static_cast< typename NumericTraits< JobIdType >::PrintType >( m_NumberOfJobs ) << std::endl;
+  os << indent << "Number of reduce dimensions: "
+     << static_cast< typename NumericTraits< DimensionReductionType >::PrintType >( m_NumberOfDimensionToReduce ) << std::endl;
+#ifndef ITK_USE_TBB
+  os << indent << "m_CurrentJobQueueIndex: " << m_CurrentJobQueueIndex << std::endl;
+#else
+  os << indent << "Number of Threads: "
+     << static_cast< typename NumericTraits< ThreadIdType >::PrintType >( m_TBBNumberOfThreads ) << std::endl;
+#endif
+}
+
+#ifdef ITK_USE_TBB
+template< typename TInputImage, typename TOutputImage >
+void TBBFunctor<TInputImage, TOutputImage>::operator() ( const tbb::blocked_range<int>& r ) const
 {
   typename TOutputImage::SizeType size = m_OutputSize;
   typename TOutputImage::IndexType index;
@@ -330,23 +345,6 @@ void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
 }
 #endif // ITK_USE_TBB
 
-template<typename TInputImage, typename TOutputImage>
-void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
-{
-  Superclass::PrintSelf( os, indent );
-
-  os << indent << "Number of Jobs: "
-     << static_cast< typename NumericTraits< JobIdType >::PrintType >( m_NumberOfJobs ) << std::endl;
-  os << indent << "Number of reduce dimensions: "
-     << static_cast< typename NumericTraits< DimensionReductionType >::PrintType >( m_NumberOfDimensionToReduce ) << std::endl;
-#ifndef ITK_USE_TBB
-  os << indent << "m_CurrentJobQueueIndex: " << m_CurrentJobQueueIndex << std::endl;
-  os << indent << "m_JobQueueMutex: " << m_JobQueueMutex << std::endl;
-#else
-  os << indent << "Number of Threads: "
-     << static_cast< typename NumericTraits< ThreadIdType >::PrintType >( m_TBBNumberOfThreads ) << std::endl;
-#endif
-}
 }  //namespace itk
 
 #endif // itkTBBImageToImageFilter_hxx
