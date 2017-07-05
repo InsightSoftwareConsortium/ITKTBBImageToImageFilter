@@ -95,6 +95,7 @@ public:
   // ImageDimension constants
   itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
+  itkStaticConstMacro(JobPerThreadRatio, unsigned int, 20);
 
 public:
 

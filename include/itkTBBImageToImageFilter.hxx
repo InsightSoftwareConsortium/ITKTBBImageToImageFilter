@@ -25,8 +25,6 @@
 #include "itkImageRegionSplitterBase.h"
 #include "itkOutputDataObjectIterator.h"
 
-#define JOB_PER_THREAD_RATIO 20
-
 #ifdef ITK_USE_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
@@ -174,7 +172,7 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateNumberOfJobs()
     int current_dim = OutputImageDimension-1;
 
     // Minimum Number of Jobs, based on the Number of thread
-    unsigned int minNbJobs = JOB_PER_THREAD_RATIO * this->GetNumberOfThreads();
+    unsigned int minNbJobs = JobPerThreadRatio * this->GetNumberOfThreads();
     while( current_dim >= 0 && m_NumberOfJobs < minNbJobs )
       {
       ++m_NumberOfDimensionToReduce;
@@ -305,6 +303,8 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::PrintSelf(std::ostream 
      << static_cast< typename NumericTraits< JobIdType >::PrintType >( m_NumberOfJobs ) << std::endl;
   os << indent << "Number of reduce dimensions: "
      << static_cast< typename NumericTraits< DimensionReductionType >::PrintType >( m_NumberOfDimensionToReduce ) << std::endl;
+  os << indent <<"Job per thread ratio: "
+     << JobPerThreadRatio << std::endl;
 #ifndef ITK_USE_TBB
   os << indent << "m_CurrentJobQueueIndex: " << m_CurrentJobQueueIndex << std::endl;
 #else
