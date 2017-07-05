@@ -345,6 +345,7 @@ void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
 #else
   os << indent << "Number of Threads: "
      << static_cast< typename NumericTraits< ThreadIdType >::PrintType >( m_TBBNumberOfThreads ) << std::endl;
+#endif
 }
 }  //namespace itk
 
