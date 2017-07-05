@@ -300,13 +300,6 @@ template< typename TInputImage, typename TOutputImage >
 
 #ifdef ITK_USE_TBB
 template<typename TInputImage, typename TOutputImage>
-void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
-{
-  os << indent << "Number of Threads: " << GetNumberOfThreads()
-     << indent << "Number of reduce dimensions: " << GetNumberOfDimensionToReduce() << std::endl;
-}
-
-template<typename TInputImage, typename TOutputImage>
 void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
 {
   typename TOutputImage::SizeType size = m_OutputSize;
@@ -337,6 +330,22 @@ void TBBFunctor::operator()(const tbb::blocked_range<int> & r) const
 }
 #endif // ITK_USE_TBB
 
+template<typename TInputImage, typename TOutputImage>
+void TBBImageToImageFilter::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf( os, indent );
+
+  os << indent << "Number of Jobs: "
+     << static_cast< typename NumericTraits< JobIdType >::PrintType >( m_NumberOfJobs ) << std::endl;
+  os << indent << "Number of reduce dimensions: "
+     << static_cast< typename NumericTraits< DimensionReductionType >::PrintType >( m_NumberOfDimensionToReduce ) << std::endl;
+#ifndef ITK_USE_TBB
+  os << indent << "m_CurrentJobQueueIndex: " << m_CurrentJobQueueIndex << std::endl;
+  os << indent << "m_JobQueueMutex: " << m_JobQueueMutex << std::endl;
+#else
+  os << indent << "Number of Threads: "
+     << static_cast< typename NumericTraits< ThreadIdType >::PrintType >( m_TBBNumberOfThreads ) << std::endl;
+}
 }  //namespace itk
 
 #endif // itkTBBImageToImageFilter_hxx
