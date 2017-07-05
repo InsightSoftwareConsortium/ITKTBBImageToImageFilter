@@ -73,11 +73,8 @@ public:
 
 } // itk
 
-int itkTBBImageToImageFilterTest(int argc, const char** argv)
+int itkTBBImageToImageFilterTest( int, char* [] )
 {
-  (void)argc;
-  (void)argv;
-
 #ifdef ITK_USE_TBB
   std::cout << "Test TBBImageToImageFilter with TBB library" << std::endl;
 #else

@@ -8,4 +8,4 @@ CreateTestDriver(TBBImageToImageFilter "${TBBImageToImageFilter-Test_LIBRARIES}"
 
 itk_add_test(NAME itkTBBImageToImageFilterTest
   COMMAND TBBImageToImageFilterTestDriver
-)
+  itkTBBImageToImageFilterTest)
