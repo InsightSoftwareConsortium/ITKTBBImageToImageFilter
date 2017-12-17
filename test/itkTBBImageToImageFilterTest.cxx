@@ -46,7 +46,7 @@ public:
   itkNewMacro(Self);
 
 protected:
-  void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) ITK_OVERRIDE
+  void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) override
   {
     // Allocate output
     typename TInputImage::ConstPointer input  = this->GetInput();
