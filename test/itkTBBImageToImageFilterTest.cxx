@@ -66,7 +66,7 @@ public:
   void ThreadedGenerateDataHelper()
   {
     OutputImageRegionType outputRegionForThread;
-    ThreadIdType threadId;
+    ThreadIdType threadId=0;
     Superclass::ThreadedGenerateData(outputRegionForThread, threadId);
   }
 };
