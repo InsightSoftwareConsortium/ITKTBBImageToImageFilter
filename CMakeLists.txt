@@ -3,7 +3,7 @@ project(TBBImageToImageFilter)
 file(READ README.md DOCUMENTATION)
 
 if(NOT ITK_SOURCE_DIR)
-    cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+    cmake_minimum_required(VERSION 3.9.5 FATAL_ERROR)
     find_package(ITK REQUIRED)
     list(APPEND CMAKE_MODULE_PATH ${ITK_CMAKE_DIR})
     include(itk-module-init.cmake)
