@@ -46,7 +46,7 @@ public:
   itkNewMacro(Self);
 
 protected:
-  virtual void TBBGenerateData(const OutputImageRegionType& outputRegionForThread)
+  void TBBGenerateData(const OutputImageRegionType& outputRegionForThread) override
   {
     // Allocate output
     typename TInputImage::ConstPointer input  = this->GetInput();
@@ -66,7 +66,7 @@ public:
   void ThreadedGenerateDataHelper()
   {
     OutputImageRegionType outputRegionForThread;
-    ThreadIdType threadId;
+    ThreadIdType threadId=0;
     Superclass::ThreadedGenerateData(outputRegionForThread, threadId);
   }
 };

@@ -112,13 +112,13 @@ public:
   void SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce);
 
   // redefinition so we can use our own member if ITK_USE_TBB is defined
-  virtual const ThreadIdType & GetNumberOfThreads() const;
-  virtual void SetNumberOfThreads(ThreadIdType);
+  const ThreadIdType & GetNumberOfThreads() const override;
+  void SetNumberOfThreads(ThreadIdType) override;
 
 
 protected:
   TBBImageToImageFilter();
-  ~TBBImageToImageFilter();
+  ~TBBImageToImageFilter() override;
 
   /** If an imaging filter can be implemented as a TBB multithreaded algorithm,
    * the filter will provide an implementation of TBBGenerateData().
@@ -132,11 +132,11 @@ protected:
 
   /** Use *TBBGenerateData()* instead of ThreadedGenerateData with TBBImageToImageFilter
   * \warning TBBImageToImageFilter doesn't support threadId */
-  virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
+  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                                     ThreadIdType threadId) ITK_FINAL;
 
   /** New default implementation for GenerateData() to use TBB */
-  void GenerateData();
+  void GenerateData() override;
 
 
   /** Set/Get the number of jobs (Internal). */
@@ -166,7 +166,7 @@ protected:
   static ITK_THREAD_RETURN_TYPE MyThreaderCallback( void *arg );
 #endif // ITK_USE_TBB
 
-  virtual void PrintSelf(std::ostream &os, Indent indent) const;
+  void PrintSelf(std::ostream &os, Indent indent) const override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
