@@ -29,15 +29,15 @@ template< typename TInputImage, typename TOutputImage >
 class TBBImageToImageFilterHelper : public TBBImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  // Standard class typedefs.
-  typedef TBBImageToImageFilterHelper                         Self;
-  typedef TBBImageToImageFilter< TInputImage, TOutputImage >  Superclass;
-  typedef SmartPointer< Self >                                Pointer;
-  typedef SmartPointer< const Self >                          ConstPointer;
+  // Standard class type alias.
+  using Self = TBBImageToImageFilterHelper;
+  using Superclass = TBBImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
-  // Superclass typedefs.
-  typedef typename Superclass::OutputImageRegionType          OutputImageRegionType;
-  typedef typename Superclass::OutputImagePixelType           OutputImagePixelType;
+  // Superclass type alias.
+  using OutputImageRegionType = typename Superclass::OutputImageRegionType;
+  using OutputImagePixelType = typename Superclass::OutputImagePixelType;
 
   // Run-time type information (and related methods).
   itkTypeMacro(TBBTestFilter, TBBImageToImageFilter);
@@ -81,8 +81,8 @@ int itkTBBImageToImageFilterTest( int, char* [] )
   std::cout << "Test TBBImageToImageFilter without TBB library" << std::endl;
 #endif
 
-  typedef itk::Image<short, 2>                                    ImageType;
-  typedef itk::TBBImageToImageFilterHelper<ImageType, ImageType>  FIlterType;
+  using ImageType = itk::Image<short, 2>;
+  using FIlterType = itk::TBBImageToImageFilterHelper<ImageType, ImageType>;
   FIlterType::Pointer tbbTestFilter =                             FIlterType::New();
 
   ImageType::Pointer input =  ImageType::New();

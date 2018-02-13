@@ -206,7 +206,7 @@ template< typename TInputImage, typename TOutputImage >
 ITK_THREAD_RETURN_TYPE TBBImageToImageFilter< TInputImage, TOutputImage >::MyThreaderCallback( void *arg )
 {
   // Get the parameters
-  typedef itk::MultiThreader::ThreadInfoStruct  ThreadInfoType;
+  using ThreadInfoType = itk::MultiThreader::ThreadInfoStruct;
   ThreadInfoType * infoStruct = static_cast< ThreadInfoType * >( arg );
   Self *instance = (Self *)(infoStruct->UserData);
   const unsigned int threadId = infoStruct->ThreadID;
