@@ -93,9 +93,9 @@ public:
 
 
   // ImageDimension constants
-  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
-  itkStaticConstMacro(JobPerThreadRatio, unsigned int, 20);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+  static constexpr unsigned int JobPerThreadRatio = 20;
 
 public:
 
@@ -216,8 +216,8 @@ public:
   typedef typename TOutputImage::SizeType         OutputImageSizeType;
   typedef typename OutputImageType::RegionType    OutputImageRegionType;
 
-  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   typedef itk::TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
 
