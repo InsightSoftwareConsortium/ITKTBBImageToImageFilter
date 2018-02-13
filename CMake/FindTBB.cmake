@@ -88,7 +88,7 @@ macro(findpkg_finish PREFIX)
                     ${PREFIX}_LIBRARY_DEBUG
                     ${PREFIX}_LIBRARY_RELEASE)
   endif ()
-endmacro(findpkg_finish)
+endmacro()
 
 #===============================================
 # Generate debug names from given RELEASEease names
@@ -96,8 +96,8 @@ endmacro(findpkg_finish)
 macro(get_debug_names PREFIX)
   foreach(i ${${PREFIX}})
     set(${PREFIX}_DEBUG ${${PREFIX}_DEBUG} ${i}d ${i}D ${i}_d ${i}_D ${i}_debug ${i})
-  endforeach(i)
-endmacro(get_debug_names)
+  endforeach()
+endmacro()
 
 #===============================================
 # See if we have env vars to help us find tbb
@@ -108,7 +108,7 @@ macro(getenv_path VAR)
    if (ENV_${VAR})
      string( REGEX REPLACE "\\\\" "/" ENV_${VAR} ${ENV_${VAR}} )
    endif ()
-endmacro(getenv_path)
+endmacro()
 
 #===============================================
 # Couple a set of RELEASEease AND debug libraries
@@ -121,7 +121,7 @@ macro(make_library_set PREFIX)
   elseif (${PREFIX}_DEBUG)
     set(${PREFIX} ${${PREFIX}_DEBUG})
   endif ()
-endmacro(make_library_set)
+endmacro()
 
 
 #=============================================================================
