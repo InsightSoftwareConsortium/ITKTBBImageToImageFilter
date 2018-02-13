@@ -62,40 +62,40 @@ class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputIma
 #endif // ITK_USE_TBB
 
 public:
-  // Standard class typedefs.
-  typedef TBBImageToImageFilter                           Self;
-  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
-  typedef SmartPointer< Self >                            Pointer;
-  typedef SmartPointer< const Self >                      ConstPointer;
+  // Standard class type alias.
+  using Self = TBBImageToImageFilter;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   // Run-time type information (and related methods).
   itkTypeMacro(TBBImageToImageFilter, ImageToImageFilter);
 
-  // Superclass typedefs.
-  typedef typename Superclass::OutputImageRegionType      OutputImageRegionType;
-  typedef typename Superclass::OutputImagePixelType       OutputImagePixelType;
+  // Superclass type alias.
+  using OutputImageRegionType = typename Superclass::OutputImageRegionType;
+  using OutputImagePixelType = typename Superclass::OutputImagePixelType;
 
-  // Some convenient typedefs. The same as itk::ImageToImageFilter
-  typedef TInputImage                                     InputImageType;
-  typedef typename InputImageType::Pointer                InputImagePointer;
-  typedef typename InputImageType::ConstPointer           InputImageConstPointer;
-  typedef typename InputImageType::RegionType             InputImageRegionType;
-  typedef typename InputImageType::PixelType              InputImagePixelType;
-  typedef typename TInputImage::SizeType                  InputImageSizeType;
+  // Some convenient type alias. The same as itk::ImageToImageFilter
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputImagePixelType = typename InputImageType::PixelType;
+  using InputImageSizeType = typename TInputImage::SizeType;
 
-  typedef TOutputImage                                    OutputImageType;
-  typedef typename TOutputImage::SizeType                 OutputImageSizeType;
+  using OutputImageType = TOutputImage;
+  using OutputImageSizeType = typename TOutputImage::SizeType;
 
   /** Type to count and reference number of jobs */
-  typedef unsigned int        JobIdType;
+  using JobIdType = unsigned int;
   /** Type to count the number of dimesions to separate the Jobs multithreading */
-  typedef int                 DimensionReductionType;
+  using DimensionReductionType = int;
 
 
   // ImageDimension constants
-  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
-  itkStaticConstMacro(JobPerThreadRatio, unsigned int, 20);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+  static constexpr unsigned int JobPerThreadRatio = 20;
 
 public:
 
@@ -210,16 +210,16 @@ template< typename TInputImage, typename TOutputImage >
 class TBBFunctor
 {
 public:
-  typedef TBBFunctor                              Self;
-  typedef TOutputImage                            OutputImageType;
-  typedef typename OutputImageType::ConstPointer  OutputImageConstPointer;
-  typedef typename TOutputImage::SizeType         OutputImageSizeType;
-  typedef typename OutputImageType::RegionType    OutputImageRegionType;
+  using Self = TBBFunctor;
+  using OutputImageType = TOutputImage;
+  using OutputImageConstPointer = typename OutputImageType::ConstPointer;
+  using OutputImageSizeType = typename TOutputImage::SizeType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-  typedef itk::TBBImageToImageFilter<TInputImage,TOutputImage> TbbImageFilterType;
+  using TbbImageFilterType = itk::TBBImageToImageFilter<TInputImage,TOutputImage>;
 
   TBBFunctor(TbbImageFilterType *tbbFilter, const OutputImageSizeType& outputSize):
     m_TBBFilter(tbbFilter), m_OutputSize(outputSize)
