@@ -62,6 +62,8 @@ class TBBImageToImageFilter : public ImageToImageFilter< TInputImage, TOutputIma
 #endif // ITK_USE_TBB
 
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
+
   // Standard class type alias.
   using Self = TBBImageToImageFilter;
   using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
@@ -169,8 +171,6 @@ protected:
   void PrintSelf(std::ostream &os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TBBImageToImageFilter);
-
   JobIdType                   m_NumberOfJobs;
   DimensionReductionType      m_NumberOfDimensionToReduce;
 
