@@ -1,6 +1,6 @@
 project(TBBImageToImageFilter)
 
-file(READ README.md DOCUMENTATION)
+file(READ README.rst DOCUMENTATION)
 
 if(NOT ITK_SOURCE_DIR)
     cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
