@@ -47,7 +47,7 @@ TBBImageToImageFilter< TInputImage, TOutputImage >::TBBImageToImageFilter()
 #ifdef ITK_USE_TBB
   // By default, do not define the number of threads.
   // Let TBB doing that.
-  this->SetNumberOfThreads(0);
+  this->SetNumberOfWorkUnits(0);
 #endif // ITK_USE_TBB
 }
 
@@ -68,29 +68,29 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateData()
 
   // Call a method that can be overridden by a subclass to perform
   // some calculations prior to splitting the main computations into
-  // separate threads
+  // separate WorkUnits
   this->BeforeThreadedGenerateData();
 
 #ifdef ITK_USE_TBB
   typename TOutputImage::SizeType outputSize = output->GetRequestedRegion().GetSize();
 
-  // Set up the number of threads with default
+  // Set up the number of WorkUnits with default
   // if it was not previously set
-  if (this->GetNumberOfThreads() <= 0)
+  if (this->GetNumberOfWorkUnits() <= 0)
     {
-    this->SetNumberOfThreads(tbb::task_scheduler_init::default_num_threads());
+    this->SetNumberOfWorkUnits(tbb::task_scheduler_init::default_num_threads());
     }
 
   // Set up the TBB task_scheduler
-  tbb::task_scheduler_init tbb_init(this->GetNumberOfThreads());
+  tbb::task_scheduler_init tbb_init(this->GetNumberOfWorkUnits());
 
   // Generate the number of Jobs
-  // based on the OutputImageDimension, NumberOfThreads and NbReduceDimensions
+  // based on the OutputImageDimension, NumberOfWorkUnits and NbReduceDimensions
   this->GenerateNumberOfJobs();
 
   // Debug Output
   itkDebugMacro(<< "TBB: " << this->GetNumberOfJobs() << "jobs, "
-                << this->GetNumberOfThreads() << "threads;" << std::endl)
+                << this->GetNumberOfWorkUnits() << "WorkUnits;" << std::endl);
 
       // Do the task decomposition using parallel_for
       tbb::parallel_for(
@@ -99,14 +99,14 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateData()
         tbb::simple_partitioner()); // force size 1 step
 #else
   // Generate the number of Jobs
-  // based on the OutputImageDimension, NumberOfThreads and NbReduceDimensions
+  // based on the OutputImageDimension, NumberOfWorkUnits and NbReduceDimensions
   this->GenerateNumberOfJobs();
 
   // Reinitialize current job index
   this->ResetJobQueue();
 
   // Set up the multithreaded processing
-  this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );
+  this->GetMultiThreader()->SetNumberOfWorkUnits( this->GetNumberOfWorkUnits() );
   this->GetMultiThreader()->SetSingleMethod(this->MyThreaderCallback, (void *)this );
 
   // multithread the execution
@@ -114,23 +114,23 @@ void TBBImageToImageFilter< TInputImage, TOutputImage >::GenerateData()
 #endif // ITK_USE_TBB
 
   // Call a method that can be overridden by a subclass to perform
-  // some calculations after all the threads have completed
+  // some calculations after all the WorkUnits have completed
   this->AfterThreadedGenerateData();
 }
 
 template< typename TInputImage, typename TOutputImage >
-const ThreadIdType & TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfThreads() const
+const ThreadIdType & TBBImageToImageFilter< TInputImage, TOutputImage >::GetNumberOfWorkUnits() const
 {
 #ifdef ITK_USE_TBB
   return m_TBBNumberOfThreads;
 #else
-  return Superclass::GetNumberOfThreads();
+  return Superclass::GetNumberOfWorkUnits();
 #endif // ITK_USE_TBB
 
 }
 
 template< typename TInputImage, typename TOutputImage >
-void TBBImageToImageFilter< TInputImage, TOutputImage >::SetNumberOfThreads(ThreadIdType nbThreads)
+void TBBImageToImageFilter<TInputImage, TOutputImage>::SetNumberOfWorkUnits(ThreadIdType nbThreads)
 {
 #ifdef ITK_USE_TBB
   this->m_TBBNumberOfThreads = nbThreads;

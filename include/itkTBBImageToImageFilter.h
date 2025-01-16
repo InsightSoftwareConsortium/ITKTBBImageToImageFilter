@@ -114,8 +114,8 @@ public:
   void SetNumberOfDimensionToReduce(DimensionReductionType NumberOfDimensionToReduce);
 
   // redefinition so we can use our own member if ITK_USE_TBB is defined
-  const ThreadIdType & GetNumberOfThreads() const override;
-  void SetNumberOfThreads(ThreadIdType) override;
+  const ThreadIdType & GetNumberOfWorkUnits() const override;
+  void SetNumberOfWorkUnits(ThreadIdType) override;
 
 
 protected:
