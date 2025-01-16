@@ -40,7 +40,7 @@ public:
   using OutputImagePixelType = typename Superclass::OutputImagePixelType;
 
   // Run-time type information (and related methods).
-  itkTypeMacro(TBBTestFilter, TBBImageToImageFilter);
+  itkTypeMacro(TBBImageToImageFilterHelper, TBBImageToImageFilter);
 
   // Method for creation through the object factory
   itkNewMacro(Self);
@@ -96,14 +96,14 @@ int itkTBBImageToImageFilterTest( int, char* [] )
   input->FillBuffer(0);
 
   tbbTestFilter->SetInput(input);
-  TRY_EXPECT_EXCEPTION(tbbTestFilter->ThreadedGenerateDataHelper());
-  TRY_EXPECT_NO_EXCEPTION(tbbTestFilter->Update());
+  ITK_TRY_EXPECT_EXCEPTION(tbbTestFilter->ThreadedGenerateDataHelper());
+  ITK_TRY_EXPECT_NO_EXCEPTION(tbbTestFilter->Update());
 
   output = tbbTestFilter->GetOutput();
   itk::ImageRegionConstIterator<ImageType> it(output, output->GetLargestPossibleRegion());
   int testValue = EXIT_SUCCESS;
   while(!it.IsAtEnd()) {
-    TEST_EXPECT_EQUAL_STATUS_VALUE(it.Get(), 1, testValue);
+    ITK_TEST_EXPECT_EQUAL_STATUS_VALUE(it.Get(), 1, testValue);
     ++it;
     }
 
